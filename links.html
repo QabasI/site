@@ -1,1 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qabas Imbewa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .name-section {
+            flex-shrink: 0;
+        }
+
+        .name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .caption {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links a:hover {
+            color: #000;
+        }
+
+        .nav-links a.active {
+            color: #000;
+            font-weight: 500;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 1.5rem 0;
+        }
+
+        .content {
+            padding-top: 1rem;
+        }
+
+        .name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+        }    
+
+        @media (max-width: 900px) {
+            .container {
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="name-section">
+                <a href="index.html" class="name" class="name">Qabas Imbewa</a>
+                <div class="caption">Joint Honours Physics & CS @ McGill University</div>
+            </div>
+            <nav class="nav-links">
+                <a href="cv.html">cv</a>
+                <a href="writing.html">writing</a>
+                <a href="links.html">links</a>
+                <a href="contact.html">contact</a>
+            </nav>
+        </header>
+        
+        <div class="divider"></div>
+
+        <div class="content">
+            Hi! This is me.
+        </div>
+    </div>
+</body>
+</html>
