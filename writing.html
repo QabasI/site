@@ -130,7 +130,6 @@
                 const blogspotUrl = 'https://imqabas.blogspot.com';
                 const rssUrl = `${blogspotUrl}/feeds/posts/default`;
                 
-                // Using allorigins as a CORS proxy
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
                 
                 fetch(proxyUrl)
@@ -151,13 +150,18 @@
 
                         const postsHTML = Array.from(entries).map(entry => {
                             const title = entry.getElementsByTagName('title')[0]?.textContent || 'Untitled';
-                            const link = entry.getElementsByTagName('link')[0]?.getAttribute('href') || '#';
+                            // Get the alternate link (blog post URL) instead of the feed link
+                            const links = entry.getElementsByTagName('link');
+                            const postLink = Array.from(links).find(link => 
+                                link.getAttribute('rel') === 'alternate' &&
+                                link.getAttribute('type') === 'text/html'
+                            )?.getAttribute('href') || '#';
                             const published = entry.getElementsByTagName('published')[0]?.textContent || '';
                             const date = published ? new Date(published).toLocaleDateString() : '';
                             
                             return `
                                 <article class="blog-post">
-                                    <h2><a href="${link}" target="_blank">${title}</a></h2>
+                                    <h2><a href="${postLink}" target="_blank">${title}</a></h2>
                                     ${date ? `<div class="post-date">${date}</div>` : ''}
                                 </article>
                             `;
