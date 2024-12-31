@@ -127,33 +127,48 @@
             <div id="blog-posts">Loading posts...</div>
 
             <script>
-
                 const blogspotUrl = 'https://imqabas.blogspot.com';
-                const rssUrl = `${blogspotUrl}/feeds/posts/default?alt=json`;
+                const rssUrl = `${blogspotUrl}/feeds/posts/default`;
                 
-                // Using rss2json service to handle CORS
-                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+                // Using allorigins as a CORS proxy
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
                 
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'ok') {
-                            const postsHTML = data.items.map(post => `
-                                <article class="blog-post">
-                                    <h2><a href="${post.link}" target="_blank">${post.title}</a></h2>
-                                    <div class="post-date">${new Date(post.pubDate).toLocaleDateString()}</div>
-                                </article>
-                            `).join('');
-                            
-                            document.getElementById('blog-posts').innerHTML = postsHTML;
-                        } else {
-                            throw new Error('Failed to load feed');
+                fetch(proxyUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
+                        return response.text();
+                    })
+                    .then(str => {
+                        const parser = new DOMParser();
+                        const xml = parser.parseFromString(str, 'text/xml');
+                        const entries = xml.getElementsByTagName('entry');
+                        
+                        if (!entries.length) {
+                            throw new Error('No entries found in feed');
+                        }
+
+                        const postsHTML = Array.from(entries).map(entry => {
+                            const title = entry.getElementsByTagName('title')[0]?.textContent || 'Untitled';
+                            const link = entry.getElementsByTagName('link')[0]?.getAttribute('href') || '#';
+                            const published = entry.getElementsByTagName('published')[0]?.textContent || '';
+                            const date = published ? new Date(published).toLocaleDateString() : '';
+                            
+                            return `
+                                <article class="blog-post">
+                                    <h2><a href="${link}" target="_blank">${title}</a></h2>
+                                    ${date ? `<div class="post-date">${date}</div>` : ''}
+                                </article>
+                            `;
+                        }).join('');
+                        
+                        document.getElementById('blog-posts').innerHTML = postsHTML;
                     })
                     .catch(error => {
+                        console.error('Detailed error:', error);
                         document.getElementById('blog-posts').innerHTML = 
-                            'Error loading blog posts. Please try again later.';
-                        console.error('Error:', error);
+                            `Error loading blog posts: ${error.message}. Please try again later.`;
                     });
             </script>
 
