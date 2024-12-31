@@ -124,7 +124,29 @@
         <div class="divider"></div>
 
         <div class="content">
-            Hi! This is me.
+            <div id="blog-posts">
+
+                <script type="text/javascript">
+                  const feedUrl = 'https://imqabas.blogspot.com/feeds/posts/default';
+                
+                  fetch(feedUrl)
+                    .then(response => response.text())
+                    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+                    .then(data => {
+                      const entries = data.querySelectorAll('entry');
+                      let postsHTML = '';
+                      entries.forEach(entry => {
+                        const title = entry.querySelector('title').textContent;
+                        const link = entry.querySelector('link').getAttribute('href');
+                        postsHTML += `<p><a href="${link}" target="_blank">${title}</a></p>`;
+                      });
+                      document.getElementById('blog-posts').innerHTML = postsHTML;
+                    })
+                    .catch(error => console.log('Error loading feed:', error));
+                </script>
+
+            </div>
+
         </div>
     </div>
 </body>
