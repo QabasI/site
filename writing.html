@@ -124,29 +124,63 @@
         <div class="divider"></div>
 
         <div class="content">
-            <div id="blog-posts">
+            <div id="blog-posts">Loading posts...</div>
 
-                <script type="text/javascript">
-                  const feedUrl = 'https://imqabas.blogspot.com/feeds/posts/default';
+            <script>
+
+                const blogspotUrl = 'https://imqabas.blogspot.com';
+                const rssUrl = `${blogspotUrl}/feeds/posts/default?alt=json`;
                 
-                  fetch(feedUrl)
-                    .then(response => response.text())
-                    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+                // Using rss2json service to handle CORS
+                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+                
+                fetch(apiUrl)
+                    .then(response => response.json())
                     .then(data => {
-                      const entries = data.querySelectorAll('entry');
-                      let postsHTML = '';
-                      entries.forEach(entry => {
-                        const title = entry.querySelector('title').textContent;
-                        const link = entry.querySelector('link').getAttribute('href');
-                        postsHTML += `<p><a href="${link}" target="_blank">${title}</a></p>`;
-                      });
-                      document.getElementById('blog-posts').innerHTML = postsHTML;
+                        if (data.status === 'ok') {
+                            const postsHTML = data.items.map(post => `
+                                <article class="blog-post">
+                                    <h2><a href="${post.link}" target="_blank">${post.title}</a></h2>
+                                    <div class="post-date">${new Date(post.pubDate).toLocaleDateString()}</div>
+                                </article>
+                            `).join('');
+                            
+                            document.getElementById('blog-posts').innerHTML = postsHTML;
+                        } else {
+                            throw new Error('Failed to load feed');
+                        }
                     })
-                    .catch(error => console.log('Error loading feed:', error));
-                </script>
+                    .catch(error => {
+                        document.getElementById('blog-posts').innerHTML = 
+                            'Error loading blog posts. Please try again later.';
+                        console.error('Error:', error);
+                    });
+            </script>
 
-            </div>
-
+            <style>
+                .blog-post {
+                    margin-bottom: 2rem;
+                }
+                
+                .blog-post h2 {
+                    font-size: 1.2rem;
+                    margin-bottom: 0.5rem;
+                }
+                
+                .blog-post a {
+                    color: #333;
+                    text-decoration: none;
+                }
+                
+                .blog-post a:hover {
+                    text-decoration: underline;
+                }
+                
+                .post-date {
+                    font-size: 0.9rem;
+                    color: #666;
+                }
+            </style>
         </div>
     </div>
 </body>
